@@ -1,0 +1,24 @@
+{
+  "name": "pirun",
+  "version": "1.0.0",
+  "description": "upload and run a project to a Pi running rpc",
+  "main": "pirun.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/superpingu/PiRun.git"
+  },
+  "author": "superpingu",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/superpingu/PiRun/issues"
+  },
+  "homepage": "https://github.com/superpingu/PiRun#readme",
+  "dependencies": {
+    "commander": "^2.9.0",
+    "shelljs": "^0.7.4",
+    "sync-request": "^3.0.1"
+  }
+}
