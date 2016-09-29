@@ -49,7 +49,7 @@
   if (checkIP(name)) {
     ip = name;
   } else {
-    ip = request('GET', "http://abonetti.fr/rpc/api/ip/" + name).getBody().toString();
+    ip = request('GET', "http://bonetti.io/rpc/api/ip/" + name).getBody().toString();
     if (ip === 'not found') {
       console.log("Raspberry Pi '" + name + "' not found");
       process.exit(-1);

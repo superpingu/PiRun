@@ -37,7 +37,7 @@ checkIP = (text) ->
 if checkIP name
     ip = name
 else # otherwise try to get IP from RPC
-    ip = request('GET', "http://abonetti.fr/rpc/api/ip/"+name).getBody().toString()
+    ip = request('GET', "http://bonetti.io/rpc/api/ip/"+name).getBody().toString()
     if ip is 'not found'
         console.log "Raspberry Pi '#{name}' not found"
         process.exit -1
