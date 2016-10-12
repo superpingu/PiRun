@@ -25,6 +25,7 @@ Finally install with admin rights with
 ```bash
 ./install.sh
 ```
+**Note :** This will install NodeJS, required by PiRun. If you don't have it already, you should definitly take a look at it, it is *pretty* amazing.
 
 ## Usage
 
