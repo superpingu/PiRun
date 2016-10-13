@@ -1,3 +1,5 @@
+apt-get remove node
+apt-get install -y curl
 curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
-sudo apt-get install -y nodejs
-sudo make install
+apt-get install -y nodejs
+make install
