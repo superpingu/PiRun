@@ -30,10 +30,10 @@ sudo ./install.sh
 ## Usage
 
 ```
-pirun <name of the Pi on RPC> [path to the root folder to upload] [make target]
+pirun <name of the Pi on RPC> [make target]
 ```
 
-By default, path to the root folder is set to the current working directory.
+If omitted, the default make target is used (equivalent to running `make`).
 
 ### .pirunignore
 

@@ -3,21 +3,18 @@ request = require 'sync-request'
 program = require 'commander'
 path = require 'path'
 
-root = ''
 name = ''
 target = ''
 
 program
     .version('0.0.1')
-    .arguments('<piname> [dir] [target]')
+    .arguments('<piname> [target]')
     .option('-f, --force', 'Force to reupload everything')
-    .action (piname, dir, tar) ->
+    .action (piname, tar) ->
         name = piname
-        root = dir ? '.'
         target = tar ? ''
     .on '--help', ->
         console.log '   <piname> : name of the Raspberry Pi on RPC or an IPv4 address'
-        console.log '   [dir] : directory to upload and run, defaults to .'
         console.log '   [target] : the target of the Makefile to execute'
         console.log ''
 program.parse process.argv
@@ -52,11 +49,11 @@ if program.force
 else
     # get the last time the files have been uploaded
     shell.config.silent = yes
-    pirunFile = shell.ls('-l', path.join(root, ".pirun.#{name}"))
+    pirunFile = shell.ls('-l', "./.pirun.#{name}")
     pirunTime = if pirunFile.code != 0 then 0 else pirunFile[0].ctime
 
 # load the list of files that should not be uploaded
-pirunIgnore = shell.cat(path.join root, ".pirunignore")
+pirunIgnore = shell.cat("./.pirunignore")
 pirunIgnore = if pirunIgnore.code != 0 then [] else pirunIgnore.split '\n'
 shell.config.silent = no
 # turn strings into regex patterns
@@ -72,7 +69,7 @@ matchIgnore = (filename) ->
 
 
 uploadFiles = (dir) ->
-    files = shell.ls '-lA', path.join(root, dir)
+    files = shell.ls '-lA', dir
     output = []
     didSomething = no
 
@@ -81,7 +78,7 @@ uploadFiles = (dir) ->
             if file.isDirectory()
                 didSomething |= uploadFiles(path.join dir, file.name)
             else
-                output.push path.join(root, dir, file.name)
+                output.push path.join(dir, file.name)
 
     if output.length > 0
         shell.exec "ssh pi@#{ip} 'mkdir -p /var/pirun/#{path.join(dirname, dir)}'"
@@ -90,13 +87,13 @@ uploadFiles = (dir) ->
     return didSomething
 
 process.stdout.write 'Uploading files ...'
-if uploadFiles ''
+if uploadFiles '.'
     console.log ' OK\n'
 else
     console.log ' already up-to-date\n'
 
 # save the date of the last upload
-shell.touch path.join(root, ".pirun.#{name}")
+shell.touch "./.pirun.#{name}"
 
 
 shell.exec "ssh pi@#{ip} 'make #{target} -C /var/pirun/#{dirname}'"
