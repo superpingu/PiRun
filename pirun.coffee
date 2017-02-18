@@ -36,6 +36,8 @@ checkIP = (text) ->
 
 if checkIP name
     ip = name
+else if name.length == 0
+    program.help()
 else # otherwise try to get IP from RPC
     ip = request('GET', "http://bonetti.io/rpc/api/ip/"+name).getBody().toString()
     if ip is 'not found'
@@ -97,6 +99,5 @@ else
 
 # save the date of the last upload
 shell.touch path.join(root, ".pirun.#{name}")
-
 
 shell.exec "ssh pi@#{ip} 'make #{target} -C /var/pirun/#{dirname}'"
