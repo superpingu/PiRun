@@ -10,7 +10,8 @@ program
     .version('0.0.1')
     .arguments('<piname> [target]')
     .option('-f, --force', 'Force to reupload everything')
-    .action (piname, tar) ->
+    .option('-s, --shell', 'Log in with ssh instead of running make')
+    .action (piname, dir, tar) ->
         name = piname
         target = tar ? ''
     .on '--help', ->
@@ -33,12 +34,17 @@ checkIP = (text) ->
 
 if checkIP name
     ip = name
+else if name.length == 0
+    program.help()
 else # otherwise try to get IP from RPC
     ip = request('GET', "http://bonetti.io/rpc/api/ip/"+name).getBody().toString()
     if ip is 'not found'
         console.log "Raspberry Pi '#{name}' not found"
         process.exit -1
 
+if program.shell
+    shell.echo("ssh pi@#{ip}").to('/tmp/pirun')
+    process.exit 0
 
 dirname = shell.pwd().split('/').pop()
 
@@ -95,5 +101,4 @@ else
 # save the date of the last upload
 shell.touch "./.pirun.#{name}"
 
-
-shell.exec "ssh pi@#{ip} 'make #{target} -C /var/pirun/#{dirname}'"
+shell.echo("ssh pi@#{ip} 'make #{target} -C /var/pirun/#{dirname}'").to('/tmp/pirun')
