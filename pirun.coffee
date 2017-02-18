@@ -11,6 +11,7 @@ program
     .version('0.0.1')
     .arguments('<piname> [dir] [target]')
     .option('-f, --force', 'Force to reupload everything')
+    .option('-s, --shell', 'Log in with ssh instead of running make')
     .action (piname, dir, tar) ->
         name = piname
         root = dir ? '.'
@@ -44,6 +45,9 @@ else # otherwise try to get IP from RPC
         console.log "Raspberry Pi '#{name}' not found"
         process.exit -1
 
+if program.shell
+    shell.echo("ssh pi@#{ip}").to('/tmp/pirun')
+    process.exit 0
 
 dirname = shell.pwd().split('/').pop()
 
@@ -100,4 +104,4 @@ else
 # save the date of the last upload
 shell.touch path.join(root, ".pirun.#{name}")
 
-shell.exec "ssh pi@#{ip} 'make #{target} -C /var/pirun/#{dirname}'"
+shell.echo("ssh pi@#{ip} 'make #{target} -C /var/pirun/#{dirname}'").to('/tmp/pirun')

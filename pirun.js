@@ -16,7 +16,7 @@
 
   target = '';
 
-  program.version('0.0.1')["arguments"]('<piname> [dir] [target]').option('-f, --force', 'Force to reupload everything').action(function(piname, dir, tar) {
+  program.version('0.0.1')["arguments"]('<piname> [dir] [target]').option('-f, --force', 'Force to reupload everything').option('-s, --shell', 'Log in with ssh instead of running make').action(function(piname, dir, tar) {
     name = piname;
     root = dir != null ? dir : '.';
     return target = tar != null ? tar : '';
@@ -56,6 +56,11 @@
       console.log("Raspberry Pi '" + name + "' not found");
       process.exit(-1);
     }
+  }
+
+  if (program.shell) {
+    shell.echo("ssh pi@" + ip).to('/tmp/pirun');
+    process.exit(0);
   }
 
   dirname = shell.pwd().split('/').pop();
@@ -129,6 +134,6 @@
 
   shell.touch(path.join(root, ".pirun." + name));
 
-  shell.exec("ssh pi@" + ip + " 'make " + target + " -C /var/pirun/" + dirname + "'");
+  shell.echo("ssh pi@" + ip + " 'make " + target + " -C /var/pirun/" + dirname + "'").to('/tmp/pirun');
 
 }).call(this);
