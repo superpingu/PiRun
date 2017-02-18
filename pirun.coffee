@@ -11,9 +11,9 @@ program
     .arguments('<piname> [target]')
     .option('-f, --force', 'Force to reupload everything')
     .option('-s, --shell', 'Log in with ssh instead of running make')
-    .action (piname, dir, tar) ->
+    .action (piname, tar) ->
         name = piname
-        target = tar ? ''
+        target = if tar then tar else ''
     .on '--help', ->
         console.log '   <piname> : name of the Raspberry Pi on RPC or an IPv4 address'
         console.log '   [target] : the target of the Makefile to execute'
