@@ -16,7 +16,6 @@
 
   program.version('0.0.1')["arguments"]('<piname> [target]').option('-f, --force', 'Force to reupload everything').option('-s, --shell', 'Log in with ssh instead of running make').action(function(piname, tar) {
     name = piname;
-    console.log(tar);
     return target = tar ? tar : '';
   }).on('--help', function() {
     console.log('   <piname> : name of the Raspberry Pi on RPC or an IPv4 address');
