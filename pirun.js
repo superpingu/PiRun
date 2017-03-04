@@ -20,7 +20,8 @@
   }).on('--help', function() {
     console.log('   <piname> : name of the Raspberry Pi on RPC or an IPv4 address');
     console.log('   [target] : the target of the Makefile to execute');
-    return console.log('');
+    console.log('');
+    return shell.echo("").to('/tmp/pirun');
   });
 
   program.parse(process.argv);
@@ -50,6 +51,7 @@
     ip = request('GET', "http://bonetti.io/rpc/api/ip/" + name).getBody().toString();
     if (ip === 'not found') {
       console.log("Raspberry Pi '" + name + "' not found");
+      shell.echo("").to('/tmp/pirun');
       process.exit(-1);
     }
   }

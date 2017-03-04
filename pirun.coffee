@@ -18,6 +18,7 @@ program
         console.log '   <piname> : name of the Raspberry Pi on RPC or an IPv4 address'
         console.log '   [target] : the target of the Makefile to execute'
         console.log ''
+        shell.echo("").to('/tmp/pirun')
 program.parse process.argv
 
 
@@ -40,6 +41,7 @@ else # otherwise try to get IP from RPC
     ip = request('GET', "http://bonetti.io/rpc/api/ip/"+name).getBody().toString()
     if ip is 'not found'
         console.log "Raspberry Pi '#{name}' not found"
+        shell.echo("").to('/tmp/pirun')
         process.exit -1
 
 if program.shell
