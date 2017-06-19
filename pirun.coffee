@@ -11,6 +11,7 @@ program
     .arguments('<piname> [target]')
     .option('-f, --force', 'Force to reupload everything')
     .option('-s, --shell', 'Log in with ssh instead of running make')
+    .option('-r, --root', 'Run make (or log in if -s option is present) as root')
     .action (piname, tar) ->
         name = piname
         target = if tar then tar else ''
@@ -20,7 +21,6 @@ program
         console.log ''
         shell.echo("").to('/tmp/pirun')
 program.parse process.argv
-
 
 # get Raspberry Pi's IP
 ip = ''
@@ -44,8 +44,10 @@ else # otherwise try to get IP from RPC
         shell.echo("").to('/tmp/pirun')
         process.exit -1
 
+user = if program.root then 'root' else 'pi'
+
 if program.shell
-    shell.echo("ssh pi@#{ip}").to('/tmp/pirun')
+    shell.echo("ssh #{user}@#{ip}").to('/tmp/pirun')
     process.exit 0
 
 dirname = shell.pwd().split('/').pop()
@@ -53,7 +55,7 @@ dirname = shell.pwd().split('/').pop()
 
 if program.force
     pirunTime = 0
-    shell.exec "ssh pi@#{ip} 'rm -rf /var/pirun/#{dirname}'"
+    shell.exec "ssh #{user}@#{ip} 'rm -rf /var/pirun/#{dirname}'"
 else
     # get the last time the files have been uploaded
     shell.config.silent = yes
@@ -89,8 +91,8 @@ uploadFiles = (dir) ->
                 output.push path.join(dir, file.name)
 
     if output.length > 0
-        shell.exec "ssh pi@#{ip} 'mkdir -p /var/pirun/#{path.join(dirname, dir)}'"
-        shell.exec "scp #{output.join(' ')} pi@#{ip}:/var/pirun/#{path.join(dirname, dir)}"
+        shell.exec "ssh #{user}@#{ip} 'mkdir -p /var/pirun/#{path.join(dirname, dir)}'"
+        shell.exec "scp #{output.join(' ')} #{user}@#{ip}:/var/pirun/#{path.join(dirname, dir)}"
         return true
     return didSomething
 
@@ -103,4 +105,4 @@ else
 # save the date of the last upload
 shell.touch "./.pirun.#{name}"
 
-shell.echo("ssh pi@#{ip} 'make #{target} -C /var/pirun/#{dirname}'").to('/tmp/pirun')
+shell.echo("ssh #{user}@#{ip} 'make #{target} -C /var/pirun/#{dirname}'").to('/tmp/pirun')
